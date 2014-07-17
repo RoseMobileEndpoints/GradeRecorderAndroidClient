@@ -199,7 +199,6 @@ public class GradeEntryListActivity extends ListActivity {
 			try {
 				Graderecorder.Gradeentry.List query = AssignmentListActivity.mService.gradeentry().list(
 						entityKeys[0]);
-				query.setOrder("student_name");
 				query.setLimit(50L);
 				gradeEntries = query.execute();
 				Log.d(AssignmentListActivity.GR, "Grade entries = " + gradeEntries);
