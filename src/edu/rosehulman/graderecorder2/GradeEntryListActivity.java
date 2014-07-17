@@ -2,35 +2,42 @@ package edu.rosehulman.graderecorder2;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.appspot.boutell_grade_recorder_2.graderecorder.Graderecorder;
 import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
 import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntry;
 import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntryCollection;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.Student;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.StudentCollection;
 
 public class GradeEntryListActivity extends ListActivity {
 
-	private long mAssignmentId;
-
+	private String mAssignmentKey;
+	private Map<String, Student> mStudentMap;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,18 +48,24 @@ public class GradeEntryListActivity extends ListActivity {
 
 		// We'll need the assignment ID to query for assignments.
 		Intent intent = getIntent();
-		mAssignmentId = intent.getLongExtra(AssignmentListActivity.KEY_ASSIGNMENT_ID, -1);
+		mAssignmentKey = intent.getStringExtra(AssignmentListActivity.KEY_ASSIGNMENT_ENTITY_KEY);
 		String assignmentName = intent.getStringExtra(AssignmentListActivity.KEY_ASSIGNMENT_NAME);
 		setTitle(assignmentName);
 
+		updateStudents();
 		updateGradeEntries();
+	}
 
+	private void updateStudents() {
+		new QueryForStudentsTask().execute();
 	}
 
 	private void updateGradeEntries() {
-		new QueryForGradeEntriesTask().execute(mAssignmentId);
+		new QueryForGradeEntriesTask().execute(mAssignmentKey);
 	}
 
+	
+	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
@@ -82,44 +95,39 @@ public class GradeEntryListActivity extends ListActivity {
 	private void addGradeEntry() {
 		DialogFragment df = new DialogFragment() {
 			@Override
-			public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-				View view = inflater.inflate(R.layout.dialog_add_grade_entry, container);
-				getDialog().setTitle(R.string.dialog_add_grade_entry_title);
-				final Button confirmButton = (Button) view.findViewById(R.id.dialog_add_grade_entry_ok);
-				final Button cancelButton = (Button) view.findViewById(R.id.dialog_add_grade_entry_cancel);
-				final EditText studentNameEditText = (EditText) view
-						.findViewById(R.id.dialog_add_grade_entry_student_name);
-				// TODO: Replace with a spinner of defaults like "TeamNN"
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle(R.string.dialog_add_grade_entry_title);
+				View view = getLayoutInflater().inflate(R.layout.dialog_add_grade_entry, null);
 				final EditText scoreEditText = (EditText) view.findViewById(R.id.dialog_add_grade_entry_score);
-
-				confirmButton.setOnClickListener(new OnClickListener() {
+				final Spinner nameSpinner = (Spinner)view.findViewById(R.id.dialog_add_grade_entry_student_spinner);
+				// TODO: set up array adapter
+				List<Student> students = new ArrayList<Student>(mStudentMap.values());
+				StudentAdapter studentAdapter = new StudentAdapter(GradeEntryListActivity.this, students);
+				studentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				nameSpinner.setAdapter(studentAdapter);
+				
+				builder.setView(view);
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					
 					@Override
-					public void onClick(View v) {
-						String name = studentNameEditText.getText().toString();
+					public void onClick(DialogInterface dialog, int which) {
+						String studentKey = ((Student)nameSpinner.getSelectedItem()).getEntityKey();
 						long score = Long.parseLong(scoreEditText.getText().toString());
-
-						Toast.makeText(GradeEntryListActivity.this, "Got the name " + name + " score " + score,
-								Toast.LENGTH_LONG).show();
 						// add the data and send to server
 						GradeEntry gradeEntry = new GradeEntry();
-						gradeEntry.setStudentName(name);
+						gradeEntry.setStudentKey(studentKey);
 						gradeEntry.setScore(score);
 						// Fails without the assignment ID!
-						gradeEntry.setAssignmentId(mAssignmentId);
+						gradeEntry.setAssignmentKey(mAssignmentKey);
 						((GradeEntryArrayAdapter) getListAdapter()).add(gradeEntry);
 						((GradeEntryArrayAdapter) getListAdapter()).notifyDataSetChanged();
 						new InsertGradeEntryTask().execute(gradeEntry);
 						dismiss();
 					}
 				});
-
-				cancelButton.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						dismiss();
-					}
-				});
-				return view;
+				builder.setNegativeButton(android.R.string.cancel, null);
+				return builder.create();
 			}
 		};
 		df.show(getFragmentManager(), "");
@@ -173,7 +181,7 @@ public class GradeEntryListActivity extends ListActivity {
 		private void deleteSelectedItems() {
 			for (GradeEntry gradeEntry : mGradeEntriesToDelete) {
 				((ArrayAdapter<GradeEntry>) getListAdapter()).remove(gradeEntry);
-				new DeleteGradeEntryTask().execute(gradeEntry.getId());
+				new DeleteGradeEntryTask().execute(gradeEntry.getEntityKey());
 			}
 			((ArrayAdapter<Assignment>) getListAdapter()).notifyDataSetChanged();
 		}
@@ -183,14 +191,14 @@ public class GradeEntryListActivity extends ListActivity {
 	// Backend communication
 	// ---------------------------------------------------------------------------------
 
-	class QueryForGradeEntriesTask extends AsyncTask<Long, Void, GradeEntryCollection> {
+	class QueryForGradeEntriesTask extends AsyncTask<String, Void, GradeEntryCollection> {
 
 		@Override
-		protected GradeEntryCollection doInBackground(Long... assignmentIds) {
+		protected GradeEntryCollection doInBackground(String... entityKeys) {
 			GradeEntryCollection gradeEntries = null;
 			try {
 				Graderecorder.Gradeentry.List query = AssignmentListActivity.mService.gradeentry().list(
-						assignmentIds[0]);
+						entityKeys[0]);
 				query.setOrder("student_name");
 				query.setLimit(50L);
 				gradeEntries = query.execute();
@@ -216,7 +224,7 @@ public class GradeEntryListActivity extends ListActivity {
 			}
 
 			GradeEntryArrayAdapter adapter = new GradeEntryArrayAdapter(GradeEntryListActivity.this,
-					android.R.layout.simple_list_item_1, result.getItems());
+					android.R.layout.simple_list_item_1, result.getItems(), mStudentMap);
 			setListAdapter(adapter);
 		}
 	}
@@ -245,14 +253,14 @@ public class GradeEntryListActivity extends ListActivity {
 		}
 	}
 
-	class DeleteGradeEntryTask extends AsyncTask<Long, Void, GradeEntry> {
+	class DeleteGradeEntryTask extends AsyncTask<String, Void, GradeEntry> {
 
 		@Override
-		protected GradeEntry doInBackground(Long... ids) {
+		protected GradeEntry doInBackground(String... entityKeys) {
 			GradeEntry returnedGradeEntry = null;
 
 			try {
-				returnedGradeEntry = AssignmentListActivity.mService.gradeentry().delete(ids[0]).execute();
+				returnedGradeEntry = AssignmentListActivity.mService.gradeentry().delete(entityKeys[0]).execute();
 			} catch (IOException e) {
 				Log.d(AssignmentListActivity.GR, "Failed deleting " + e, e);
 			}
@@ -269,4 +277,48 @@ public class GradeEntryListActivity extends ListActivity {
 			updateGradeEntries();
 		}
 	}
+	
+	class QueryForStudentsTask extends AsyncTask<Void, Void, StudentCollection> {
+
+		@Override
+		protected StudentCollection doInBackground(Void... unused) {
+			StudentCollection students = null;
+			try {
+				// The logs are here to help debug authentication issues I
+				// had...
+				// Need qualification here for import below to work unqualified,
+				// since there are two identically-named Assignment classes, in
+				// the service and the model.
+				Graderecorder.Student.List query = AssignmentListActivity.mService.student().list();
+				Log.d(AssignmentListActivity.GR, "Query = " + (query == null ? "null " : query.toString()));
+				query.setLimit(50L);
+				students = query.execute();
+				Log.d(AssignmentListActivity.GR, "Students = " + students);
+
+			} catch (IOException e) {
+				Log.d(AssignmentListActivity.GR, "Failed loading " + e, e);
+
+			}
+			return students;
+		}
+
+		@Override
+		protected void onPostExecute(StudentCollection result) {
+			super.onPostExecute(result);
+			if (result == null) {
+				Log.d(AssignmentListActivity.GR, "Failed loading, result is null");
+				return;
+			}
+
+			// Store students for later use.
+			mStudentMap = new TreeMap<String, Student>();
+			for (Student s : result.getItems()) {
+				mStudentMap.put(s.getEntityKey(), s);
+			}
+		}
+	}
+
+	
+	
+	
 }

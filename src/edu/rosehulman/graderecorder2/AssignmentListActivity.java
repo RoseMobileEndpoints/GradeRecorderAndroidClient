@@ -53,7 +53,7 @@ public class AssignmentListActivity extends ListActivity {
 	static final int REQUEST_ACCOUNT_PICKER = 1;
 	public static final String GR = "GR";
 
-	static final String KEY_ASSIGNMENT_ID = "KEY_ASSIGNMENT_ID";
+	static final String KEY_ASSIGNMENT_ENTITY_KEY = "KEY_ASSIGNMENT_ID";
 	static final String KEY_ASSIGNMENT_NAME = "KEY_ASSIGNMENT_NAME";
 	static final String KEY_SERVICE = "KEY_SERVICE";
 
@@ -149,7 +149,7 @@ public class AssignmentListActivity extends ListActivity {
 		Intent gradeIntent = new Intent(this, GradeEntryListActivity.class);
 		Assignment assignment = (Assignment) getListAdapter().getItem(position);
 		gradeIntent.putExtra(KEY_ASSIGNMENT_NAME, assignment.getName());
-		gradeIntent.putExtra(KEY_ASSIGNMENT_ID, assignment.getId());
+		gradeIntent.putExtra(KEY_ASSIGNMENT_ENTITY_KEY, assignment.getEntityKey());
 		startActivity(gradeIntent);
 	}
 
@@ -263,7 +263,7 @@ public class AssignmentListActivity extends ListActivity {
 		private void deleteSelectedItems() {
 			for (Assignment assignment : mAssignmentsToDelete) {
 				((ArrayAdapter<Assignment>) getListAdapter()).remove(assignment);
-				new DeleteAssignmentTask().execute(assignment.getId());
+				new DeleteAssignmentTask().execute(assignment.getEntityKey());
 			}
 			((ArrayAdapter<Assignment>) getListAdapter()).notifyDataSetChanged();
 		}
@@ -291,7 +291,6 @@ public class AssignmentListActivity extends ListActivity {
 				Log.d(GR, "Using account name = " + mCredential.getSelectedAccountName());
 				Graderecorder.Assignment.List query = mService.assignment().list();
 				Log.d(GR, "Query = " + (query == null ? "null " : query.toString()));
-				query.setOrder("name");
 				query.setLimit(50L);
 				assignments = query.execute();
 				Log.d(GR, "Assignments = " + assignments);
@@ -347,14 +346,14 @@ public class AssignmentListActivity extends ListActivity {
 
 	}
 
-	class DeleteAssignmentTask extends AsyncTask<Long, Void, Assignment> {
+	class DeleteAssignmentTask extends AsyncTask<String, Void, Assignment> {
 
 		@Override
-		protected Assignment doInBackground(Long... ids) {
+		protected Assignment doInBackground(String... entityKeys) {
 			Assignment returnedAssignment = null;
 
 			try {
-				returnedAssignment = mService.assignment().delete(ids[0]).execute();
+				returnedAssignment = mService.assignment().delete(entityKeys[0]).execute();
 			} catch (IOException e) {
 				Log.d(GR, "Failed deleting " + e);
 			}
