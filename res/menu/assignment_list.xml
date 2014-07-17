@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   <item
+        android:id="@+id/menu_assignment_add"
+    	android:icon="@drawable/ic_menu_add"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/add_long"
+        android:titleCondensed="@string/add"/>
+
+    <item
+        android:id="@+id/menu_assignment_sync"
+    	android:icon="@drawable/ic_menu_sync"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/sync_long"
+        android:titleCondensed="@string/sync"/>
+    
+    <item
+        android:id="@+id/menu_assignment_login"
+    	android:icon="@drawable/ic_menu_add_account"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/login_to_new_account"
+        android:titleCondensed="@string/login"
+        />
+
+</menu>

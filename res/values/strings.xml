@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GradeRecorder</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Grade Recorder</string>
+    <string name="loading_data">Loading . . .</string>
+    <string name="add_long">Add assignment</string>
+    <string name="add">Add</string>
+    <string name="sync_long">Sync account</string>
+    <string name="sync">Sync</string>
+    <string name="login_to_new_account">Login to new account</string>
+    <string name="login">Login</string>
+    <string name="assignment_name_hint">Enter the name of the assignment</string>
+    <string name="grade_entry_student_name_hint">Enter the name </string>
+    <string name="grade_entry_score_hint">Enter the score</string>
+    <string name="dialog_add_assignment_title">Add an assignment</string>
+    <string name="dialog_add_grade_entry_title">Add a grade entry</string>
+    <string name="dialog_add_student_name_hint">Enter the student/team name</string>
+    <string name="dialog_add_score_hint">Enter the score</string>
+    <string name="dialog_edit_grade_entry_title">Edit a grade entry</string>
+    <string name="context_delete_item_text">Delete</string>
+    <string name="context_delete_title">Select assignments to delete</string>
+    <string name="title_activity_grade_entry">Grade Entry</string>
 
 </resources>
