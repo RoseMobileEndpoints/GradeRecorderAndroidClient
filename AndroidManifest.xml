@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.rosehulman.graderecorder"
+    package="edu.rosehulman.graderecorder2"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
-            android:name="edu.rosehulman.graderecorder.AssignmentListActivity"
+            android:name="edu.rosehulman.graderecorder2.AssignmentListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="edu.rosehulman.graderecorder.GradeEntryListActivity"
+            android:name="edu.rosehulman.graderecorder2.GradeEntryListActivity"
             android:label="@string/title_activity_grade_entry" >
         </activity>
     </application>

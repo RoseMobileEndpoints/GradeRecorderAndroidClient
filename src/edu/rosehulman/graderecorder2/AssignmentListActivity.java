@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder;
+package edu.rosehulman.graderecorder2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.appspot.boutell_grade_recorder.grade_recorder.GradeRecorder;
-import com.appspot.boutell_grade_recorder.grade_recorder.model.Assignment;
-import com.appspot.boutell_grade_recorder.grade_recorder.model.AssignmentCollection;
+import com.appspot.boutell_grade_recorder_2.graderecorder.Graderecorder;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.AssignmentCollection;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
@@ -46,7 +46,7 @@ public class AssignmentListActivity extends ListActivity {
 
 	// FIXME: Replace this evil global variable with a more robust singleton
 	// object.
-	static GradeRecorder mService;
+	static Graderecorder mService;
 
 	public static final String SHARED_PREFERENCES_NAME = "GradeRecorder";
 	public static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
@@ -84,8 +84,8 @@ public class AssignmentListActivity extends ListActivity {
 		setAccountName(mSettings.getString(PREF_ACCOUNT_NAME, null));
 
 		// Note the last parameter isn't null.
-		GradeRecorder.Builder builder = new GradeRecorder.Builder(AndroidHttp.newCompatibleTransport(),
-				new GsonFactory(), mCredential);
+		Graderecorder.Builder builder = new Graderecorder.Builder(
+				AndroidHttp.newCompatibleTransport(), new GsonFactory(), mCredential);
 		mService = builder.build();
 
 		if (mCredential.getSelectedAccountName() == null) {
@@ -173,19 +173,23 @@ public class AssignmentListActivity extends ListActivity {
 	private void addAssignment() {
 		DialogFragment df = new DialogFragment() {
 			@Override
-			public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			public View onCreateView(LayoutInflater inflater, ViewGroup container,
+					Bundle savedInstanceState) {
 				View view = inflater.inflate(R.layout.dialog_add_assignment, container);
 				getDialog().setTitle(R.string.dialog_add_assignment_title);
-				final Button confirmButton = (Button) view.findViewById(R.id.dialog_add_assignment_ok);
-				final Button cancelButton = (Button) view.findViewById(R.id.dialog_add_assignment_cancel);
-				final EditText assignmentNameEditText = (EditText) view.findViewById(R.id.dialog_add_assignment_name);
+				final Button confirmButton = (Button) view
+						.findViewById(R.id.dialog_add_assignment_ok);
+				final Button cancelButton = (Button) view
+						.findViewById(R.id.dialog_add_assignment_cancel);
+				final EditText assignmentNameEditText = (EditText) view
+						.findViewById(R.id.dialog_add_assignment_name);
 
 				confirmButton.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						String name = assignmentNameEditText.getText().toString();
-						Toast.makeText(AssignmentListActivity.this, "Got the assignment named " + name,
-								Toast.LENGTH_LONG).show();
+						Toast.makeText(AssignmentListActivity.this,
+								"Got the assignment named " + name, Toast.LENGTH_LONG).show();
 						// add the data and send to server
 						Assignment assignment = new Assignment();
 						assignment.setName(name);
@@ -234,7 +238,8 @@ public class AssignmentListActivity extends ListActivity {
 		}
 
 		@Override
-		public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+		public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
+				boolean checked) {
 			Assignment item = (Assignment) getListAdapter().getItem(position);
 			if (checked) {
 				mAssignmentsToDelete.add(item);
@@ -284,7 +289,7 @@ public class AssignmentListActivity extends ListActivity {
 				// since there are two identically-named Assignment classes, in
 				// the service and the model.
 				Log.d(GR, "Using account name = " + mCredential.getSelectedAccountName());
-				GradeRecorder.Assignment.List query = mService.assignment().list();
+				Graderecorder.Assignment.List query = mService.assignment().list();
 				Log.d(GR, "Query = " + (query == null ? "null " : query.toString()));
 				query.setOrder("name");
 				query.setLimit(50L);
@@ -310,8 +315,9 @@ public class AssignmentListActivity extends ListActivity {
 				result.setItems(new ArrayList<Assignment>());
 			}
 
-			AssignmentArrayAdapter adapter = new AssignmentArrayAdapter(AssignmentListActivity.this,
-					android.R.layout.simple_list_item_1, result.getItems());
+			AssignmentArrayAdapter adapter = new AssignmentArrayAdapter(
+					AssignmentListActivity.this, android.R.layout.simple_list_item_1,
+					result.getItems());
 			setListAdapter(adapter);
 		}
 	}

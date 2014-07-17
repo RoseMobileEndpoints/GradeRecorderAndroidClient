@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder;
+package edu.rosehulman.graderecorder2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +22,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntry;
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntryCollection;
 
 public class GradeEntryListActivity extends ListActivity {
 
@@ -185,7 +189,7 @@ public class GradeEntryListActivity extends ListActivity {
 		protected GradeEntryCollection doInBackground(Long... assignmentIds) {
 			GradeEntryCollection gradeEntries = null;
 			try {
-				GradeRecorder.Gradeentry.List query = AssignmentListActivity.mService.gradeentry().list(
+				Graderecorder.Gradeentry.List query = AssignmentListActivity.mService.gradeentry().list(
 						assignmentIds[0]);
 				query.setOrder("student_name");
 				query.setLimit(50L);

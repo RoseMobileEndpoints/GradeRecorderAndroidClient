@@ -1,6 +1,8 @@
-package edu.rosehulman.graderecorder;
+package edu.rosehulman.graderecorder2;
 
 import java.util.List;
+
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
 
 import android.content.Context;
 import android.util.TypedValue;

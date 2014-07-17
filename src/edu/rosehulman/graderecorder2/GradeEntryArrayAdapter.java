@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder;
+package edu.rosehulman.graderecorder2;
 
 import java.util.List;
 
@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
+import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntry;
 
 
 public class GradeEntryArrayAdapter extends ArrayAdapter<GradeEntry> {
