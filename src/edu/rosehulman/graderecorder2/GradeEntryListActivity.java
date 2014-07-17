@@ -2,6 +2,8 @@ package edu.rosehulman.graderecorder2;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.appspot.boutell_grade_recorder_2.graderecorder.Graderecorder;
 import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
@@ -37,6 +38,7 @@ public class GradeEntryListActivity extends ListActivity {
 
 	private String mAssignmentKey;
 	private Map<String, Student> mStudentMap;
+	private List<Student> mStudents;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +103,10 @@ public class GradeEntryListActivity extends ListActivity {
 				View view = getLayoutInflater().inflate(R.layout.dialog_add_grade_entry, null);
 				final EditText scoreEditText = (EditText) view.findViewById(R.id.dialog_add_grade_entry_score);
 				final Spinner nameSpinner = (Spinner)view.findViewById(R.id.dialog_add_grade_entry_student_spinner);
-				// TODO: set up array adapter
-				List<Student> students = new ArrayList<Student>(mStudentMap.values());
-				StudentAdapter studentAdapter = new StudentAdapter(GradeEntryListActivity.this, students);
+				
+				// Map orders students by KEY (or comparators on keys), not rose username, 
+				// So I build and sort the list and use it.
+				StudentAdapter studentAdapter = new StudentAdapter(GradeEntryListActivity.this, mStudents);
 				studentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				nameSpinner.setAdapter(studentAdapter);
 				
@@ -310,10 +313,19 @@ public class GradeEntryListActivity extends ListActivity {
 			}
 
 			// Store students for later use.
+			mStudents = new ArrayList<Student>();
 			mStudentMap = new TreeMap<String, Student>();
 			for (Student s : result.getItems()) {
 				mStudentMap.put(s.getEntityKey(), s);
+				mStudents.add(s);
 			}
+			Comparator<Student> comp = new Comparator<Student>() {
+				@Override
+				public int compare(Student lhs, Student rhs) {
+					return lhs.getRoseUsername().compareTo(rhs.getRoseUsername());
+				}
+			};
+			Collections.sort(mStudents, comp);
 		}
 	}
 
