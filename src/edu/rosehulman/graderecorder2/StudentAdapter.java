@@ -25,4 +25,13 @@ public class StudentAdapter extends ArrayAdapter<Student> {
 		return view;
 	}
 
+	@Override
+	public View getDropDownView(int position, View convertView, ViewGroup parent) {
+		View view = super.getDropDownView(position, convertView, parent);
+		TextView tv = (TextView) view.findViewById(android.R.id.text1);
+		Student student = getItem(position);
+		tv.setText(student.getFirstName() + " " + student.getLastName());
+		return view;
+	}
+	
 }
