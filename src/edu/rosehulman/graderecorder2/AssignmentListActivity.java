@@ -68,10 +68,8 @@ public class AssignmentListActivity extends ListActivity {
 
 		// TODO: Create a credential object with the client id of the *deployed*
 		// web client, NOT the Android client. (Go figure.)
-//		mCredential = GoogleAccountCredential.usingAudience(this,
-//				"server:client_id:<<your web client ID here>>>.apps.googleusercontent.com");
 		mCredential = GoogleAccountCredential.usingAudience(this,
-				"server:client_id:3607967651-5nqg6qis8ivo294oenp8nff9k35dp70h.apps.googleusercontent.com");
+				"server:client_id:<<your web client ID here>>>.apps.googleusercontent.com");
 		
 		// Easy if only ever 1 user.
 		// FIXME: Known issue: since on the backend, we used the user property
