@@ -83,9 +83,9 @@ public class AssignmentListActivity extends ListActivity {
 		mSettings = getSharedPreferences(SHARED_PREFERENCES_NAME, 0);
 		setAccountName(mSettings.getString(PREF_ACCOUNT_NAME, null));
 
-		// Note the last parameter isn't null.
+		// TODO: Pass mCredential as the last parameter instead of null.
 		Graderecorder.Builder builder = new Graderecorder.Builder(
-				AndroidHttp.newCompatibleTransport(), new GsonFactory(), mCredential);
+				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
 		mService = builder.build();
 
 		if (mCredential.getSelectedAccountName() == null) {
