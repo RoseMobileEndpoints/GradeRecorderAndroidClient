@@ -189,7 +189,7 @@ public class AssignmentListActivity extends ListActivity {
 				confirmButton.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						String name = assignmentNameEditText.getText().toString();
+						String name = assignmentNameEditText.getText().toString(); 
 						Toast.makeText(AssignmentListActivity.this,
 								"Got the assignment named " + name, Toast.LENGTH_LONG).show();
 						// add the data and send to server
