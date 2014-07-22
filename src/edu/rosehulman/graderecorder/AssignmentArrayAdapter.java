@@ -1,8 +1,6 @@
-package edu.rosehulman.graderecorder2;
+package edu.rosehulman.graderecorder;
 
 import java.util.List;
-
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -10,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.appspot.boutell_grade_recorder.graderecorder.model.Assignment;
 
 public class AssignmentArrayAdapter extends ArrayAdapter<Assignment> {
 

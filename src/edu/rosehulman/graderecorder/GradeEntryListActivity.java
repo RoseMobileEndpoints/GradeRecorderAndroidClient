@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder2;
+package edu.rosehulman.graderecorder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,12 +27,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.appspot.boutell_grade_recorder_2.graderecorder.Graderecorder;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntry;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.GradeEntryCollection;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.Student;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.StudentCollection;
+import com.appspot.boutell_grade_recorder.graderecorder.Graderecorder;
+import com.appspot.boutell_grade_recorder.graderecorder.model.Assignment;
+import com.appspot.boutell_grade_recorder.graderecorder.model.GradeEntry;
+import com.appspot.boutell_grade_recorder.graderecorder.model.GradeEntryCollection;
+import com.appspot.boutell_grade_recorder.graderecorder.model.Student;
+import com.appspot.boutell_grade_recorder.graderecorder.model.StudentCollection;
+
 
 public class GradeEntryListActivity extends ListActivity {
 

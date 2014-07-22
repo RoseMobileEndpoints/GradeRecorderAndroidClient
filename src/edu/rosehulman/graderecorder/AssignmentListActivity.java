@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder2;
+package edu.rosehulman.graderecorder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +25,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.appspot.boutell_grade_recorder_2.graderecorder.Graderecorder;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.Assignment;
-import com.appspot.boutell_grade_recorder_2.graderecorder.model.AssignmentCollection;
+import com.appspot.boutell_grade_recorder.graderecorder.Graderecorder;
+import com.appspot.boutell_grade_recorder.graderecorder.model.Assignment;
+import com.appspot.boutell_grade_recorder.graderecorder.model.AssignmentCollection;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
+
 
 public class AssignmentListActivity extends ListActivity {
 
@@ -69,7 +70,7 @@ public class AssignmentListActivity extends ListActivity {
 		// TODO: Create a credential object with the client id of the *deployed*
 		// web client, NOT the Android client. (Go figure.)
 		mCredential = GoogleAccountCredential.usingAudience(this,
-				"server:client_id:<<your web client ID here>>>.apps.googleusercontent.com");
+				"server:client_id:972418852608-i9ksl96e4pef0kdlmdjlhq6df3utqkjr.apps.googleusercontent.com");
 		
 		// Easy if only ever 1 user.
 		// FIXME: Known issue: since on the backend, we used the user property
@@ -85,7 +86,7 @@ public class AssignmentListActivity extends ListActivity {
 
 		// TODO: Pass mCredential as the last parameter instead of null.
 		Graderecorder.Builder builder = new Graderecorder.Builder(
-				AndroidHttp.newCompatibleTransport(), new GsonFactory(), null);
+				AndroidHttp.newCompatibleTransport(), new GsonFactory(), mCredential);
 		mService = builder.build();
 
 		if (mCredential.getSelectedAccountName() == null) {

@@ -1,4 +1,4 @@
-package edu.rosehulman.graderecorder2;
+package edu.rosehulman.graderecorder;
 
 import android.app.Activity;
 import android.content.Context;
